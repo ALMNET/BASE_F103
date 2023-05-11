@@ -63,6 +63,7 @@ void task1_handler(void const * argument);
 static void task1_UART(void * parameters);
 static void task2_UART(void * parameters);
 static void task_LED(void * parameters);
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
 
 /* USER CODE END PFP */
 
@@ -97,7 +98,6 @@ int main(void)
 
   /* Configure the system clock */
   SystemClock_Config();
-
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
@@ -105,6 +105,19 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+
+  printf("Starting...");
+
+  HAL_StatusTypeDef UartResult;
+
+
+  UartResult = HAL_UART_Transmit(&huart2, "hola\n", 5, 100);
+
+
+  if(UartResult == HAL_OK)
+  {}
+
+//  HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -149,7 +162,7 @@ int main(void)
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */
-  osKernelStart();
+  vTaskStartScheduler();
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -293,6 +306,21 @@ static void task_LED(void * parameters)
 	}
 
 }
+
+/**
+  * @brief  Retargets the C library printf function to the USART.
+  * @param  None
+  * @retval None
+  */
+PUTCHAR_PROTOTYPE
+{
+  /* Place your implementation of fputc here */
+  /* e.g. write a character to the USART1 and Loop until the end of transmission */
+  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);
+
+  return ch;
+}
+
 
 /* USER CODE END 4 */
 
