@@ -38,37 +38,37 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := BASE_F103_2
+BUILD_ARTIFACT_NAME := BASE_F103
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-BASE_F103_2.elf \
+BASE_F103.elf \
 
 MAP_FILES += \
-BASE_F103_2.map \
+BASE_F103.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-BASE_F103_2.list \
+BASE_F103.list \
 
 OBJCOPY_HEX += \
-BASE_F103_2.hex \
+BASE_F103.hex \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: BASE_F103_2.elf secondary-outputs
+main-build: BASE_F103.elf secondary-outputs
 
 # Tool invocations
-BASE_F103_2.elf BASE_F103_2.map: $(OBJS) $(USER_OBJS) D:\Armando\OneDrive\PROJECTS\STM32Cube\RTOS_workspace\BASE_F103_2\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "BASE_F103_2.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\Armando\OneDrive\PROJECTS\STM32Cube\RTOS_workspace\BASE_F103_2\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="BASE_F103_2.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+BASE_F103.elf BASE_F103.map: $(OBJS) $(USER_OBJS) D:\Armando\OneDrive\PROJECTS\STM32Cube\RTOS_workspace\BASE_F103\STM32F103C8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "BASE_F103.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\Armando\OneDrive\PROJECTS\STM32Cube\RTOS_workspace\BASE_F103\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="BASE_F103.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -77,19 +77,19 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-BASE_F103_2.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "BASE_F103_2.list"
+BASE_F103.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "BASE_F103.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-BASE_F103_2.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "BASE_F103_2.hex"
+BASE_F103.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "BASE_F103.hex"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) BASE_F103_2.elf BASE_F103_2.hex BASE_F103_2.list BASE_F103_2.map default.size.stdout
+	-$(RM) BASE_F103.elf BASE_F103.hex BASE_F103.list BASE_F103.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX)
