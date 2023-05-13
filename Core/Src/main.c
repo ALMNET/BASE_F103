@@ -26,6 +26,9 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "fonts.h"
+#include "ssd1306.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,6 +47,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+I2C_HandleTypeDef hi2c1;
+
 UART_HandleTypeDef huart2;
 
 osThreadId defaultTaskHandle;
@@ -56,6 +61,7 @@ osThreadId Task1Handle;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_I2C1_Init(void);
 void StartDefaultTask(void const * argument);
 void task1_handler(void const * argument);
 
@@ -98,6 +104,7 @@ int main(void)
 
   /* Configure the system clock */
   SystemClock_Config();
+
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
@@ -105,20 +112,27 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
-
-  printf("Starting...");
-
-  HAL_StatusTypeDef UartResult;
-
-
-  UartResult = HAL_UART_Transmit(&huart2, "hola\n", 5, 100);
-
-
-  if(UartResult == HAL_OK)
-  {}
-
-//  HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size, uint32_t Timeout)
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+
+	SSD1306_Init();
+	char snum[5];
+
+	SSD1306_GotoXY (0,0);
+	SSD1306_Puts ("MOR Y", &Font_11x18, SSD1306_COLOR_WHITE);
+	SSD1306_GotoXY (0, 20);
+	SSD1306_Puts ("YO XD", &Font_11x18, SSD1306_COLOR_WHITE);
+	SSD1306_UpdateScreen();
+	HAL_Delay (1000);
+
+	SSD1306_ScrollRight(0,7);
+	HAL_Delay(3000);
+	SSD1306_ScrollLeft(0,7);
+	HAL_Delay(3000);
+	SSD1306_Stopscroll();
+//	SSD1306_Clear();
+//	SSD1306_GotoXY (35,0);
+//	SSD1306_Puts ("SCORE", &Font_7x10, 1);
 
   /* USER CODE END 2 */
 
@@ -212,6 +226,40 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 400000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -258,6 +306,7 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
@@ -297,6 +346,8 @@ static void task2_UART(void * parameters)
 
 static void task_LED(void * parameters)
 {
+
+	printf("Hoal");
 	while(1)
 	{
 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
